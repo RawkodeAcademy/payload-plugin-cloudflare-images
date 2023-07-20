@@ -2,74 +2,66 @@ import { CollectionConfig } from "payload/types";
 import { File, UploadResponse } from "./types";
 
 interface Config {
-  accountId?: string;
-  apiToken?: string;
-  imageDeliveryUrl?: string;
+	accountId?: string;
+	apiToken?: string;
+	imageDeliveryUrl?: string;
 }
 
 export class CloudflareImageService {
-  private config: Config;
-  private baseUrl: string;
+	private config: Config;
+	private baseUrl: string;
 
-  constructor(
-    config: Config,
-  ) {
-    this.config = config;
+	constructor(config: Config) {
+		this.config = config;
 
-    // Environment variables always take precedence
-    if (process.env.CLOUDFLARE_ACCOUNT_ID) {
-      this.config.accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-    }
-    if (process.env.CLOUDFLARE_API_TOKEN) {
-      this.config.apiToken = process.env.CLOUDFLARE_API_TOKEN;
-    }
-    if (process.env.CLOUDFLARE_IMAGE_DELIVERY_URL) {
-      this.config.imageDeliveryUrl = process.env.CLOUDFLARE_IMAGE_DELIVERY_URL;
-    }
+		// Environment variables always take precedence
+		if (process.env.CLOUDFLARE_ACCOUNT_ID) {
+			this.config.accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+		}
+		if (process.env.CLOUDFLARE_API_TOKEN) {
+			this.config.apiToken = process.env.CLOUDFLARE_API_TOKEN;
+		}
+		if (process.env.CLOUDFLARE_IMAGE_DELIVERY_URL) {
+			this.config.imageDeliveryUrl = process.env.CLOUDFLARE_IMAGE_DELIVERY_URL;
+		}
+		this.baseUrl = `https://api.cloudflare.com/client/v4/accounts/${this.config.accountId}/images/v1`;
+	}
 
-    console.debug(this.config);
+	getImageDeliveryUrl(): string {
+		return this.config.imageDeliveryUrl;
+	}
 
-    this.baseUrl = `https://api.cloudflare.com/client/v4/accounts/${this.config.accountId}/images/v1`;
-  }
+	async upload(
+		file: File,
+		collectionConfig: CollectionConfig,
+	): Promise<UploadResponse> {
+		const formData = new FormData();
 
-  getImageDeliveryUrl(): string {
-    return this.config.imageDeliveryUrl;
-  }
+		formData.append(
+			"metadata",
+			JSON.stringify({
+				collection: collectionConfig?.slug,
+			}),
+		);
+		formData.append("file", new Blob([file.buffer]), file.filename);
 
-  async upload(
-    file: File,
-    collectionConfig: CollectionConfig
-  ): Promise<UploadResponse> {
-    console.log("Cloudflare Images upload ...");
-    const formData = new FormData();
+		const response = await fetch(this.baseUrl, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${this.config.apiToken}`,
+			},
+			body: formData,
+		});
 
-    formData.append("metadata", JSON.stringify({
-      collection: collectionConfig?.slug,
-    }));
-    formData.append("file", new Blob([file.buffer]), file.filename);
+		return (await response.json()) as UploadResponse;
+	}
 
-
-    console.debug(formData);
-
-    const response = await fetch(this.baseUrl, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${this.config.apiToken}`,
-      },
-      body: formData,
-    });
-
-    return await response.json() as UploadResponse;
-  }
-
-  async delete(imageId: string): Promise<boolean> {
-    const response = await fetch(`${this.baseUrl}/${imageId}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization": `Bearer ${this.config.apiToken}`,
-      }
-    });
-
-    return response.ok;
-  }
+	async delete(imageId: string): Promise<void> {
+		await fetch(`${this.baseUrl}/${imageId}`, {
+			method: "DELETE",
+			headers: {
+				Authorization: `Bearer ${this.config.apiToken}`,
+			},
+		});
+	}
 }
