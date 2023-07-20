@@ -31,6 +31,7 @@ export class CloudflareImageService {
     buffer: Buffer,
     collectionConfig: CollectionConfig
   ): Promise<UploadResponse> {
+    console.log("Cloudflare Images upload ...");
     const formData = new FormData();
 
     formData.append("file", new Blob([buffer]), filename);

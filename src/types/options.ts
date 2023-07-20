@@ -4,3 +4,7 @@ export interface PluginOptions {
     apiToken?: string;
     collections: string[];
 }
+
+export interface CollectionOptions {
+    disableLocalStorage?: boolean;
+}
