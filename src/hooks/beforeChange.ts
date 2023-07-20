@@ -10,12 +10,16 @@ interface Args {
 export const getBeforeChangeHook =
     ({ collection }: Args): BeforeChangeHook<FileData & TypeWithID> =>
         async ({ req, data, originalDoc }) => {
+            console.log("getBeforeChangeHook for Cloudflare Images");
+
             const service = new CloudflareImageService({});
 
             try {
                 const files = getIncomingFiles({ req, data })
 
                 if (files.length > 0) {
+                    console.log("Got a File");
+
                     // If there is an original doc,
                     // And we have new files,
                     // We need to delete the old files before uploading new
@@ -44,6 +48,7 @@ export const getBeforeChangeHook =
                     }
 
                     const promises = files.map(async file => {
+                        console.log("Uploading File");
                         await service.upload(file.filename, file.buffer, collection)
                     })
 

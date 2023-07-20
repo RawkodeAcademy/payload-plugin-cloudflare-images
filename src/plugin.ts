@@ -9,7 +9,6 @@ export const cloudflareImages =
       const { collections: allCollectionOptions, enabled } = pluginOptions
       const config = { ...incomingConfig }
 
-
       config.admin = {
         ...(config.admin || {}),
       }
@@ -26,13 +25,6 @@ export const cloudflareImages =
           const options = allCollectionOptions[existingCollection.slug]
 
           if (options?.adapter) {
-            const adapter = options.adapter({
-              collection: existingCollection,
-              prefix: options.prefix,
-            })
-
-            if (adapter.onInit) initFunctions.push(adapter.onInit)
-
             const fields = getFields();
 
             const handlers = [
@@ -41,10 +33,6 @@ export const cloudflareImages =
                 ? existingCollection.upload.handlers
                 : []),
             ]
-
-            if (!options.disablePayloadAccessControl) {
-              handlers.push(adapter.staticHandler)
-            }
 
             return {
               ...existingCollection,
