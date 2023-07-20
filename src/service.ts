@@ -47,7 +47,6 @@ export class CloudflareImageService {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${this.config.apiToken}`,
-        "Content-Type": "multipart/form-data",
       },
       body: formData,
     });
