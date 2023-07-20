@@ -45,7 +45,7 @@ export class CloudflareImageService {
     const response = await fetch(this.baseUrl, {
       method: "POST",
       headers: {
-        "X-Auth-Key": this.config.apiToken,
+        "Authorization": `Bearer ${this.config.apiToken}`,
         "Content-Type": "multipart/form-data",
       },
       body: formData,
@@ -58,7 +58,7 @@ export class CloudflareImageService {
     const response = await fetch(`${this.baseUrl}/${imageId}`, {
       method: "DELETE",
       headers: {
-        "X-Auth-Key": this.config.apiToken,
+        "Authorization": `Bearer ${this.config.apiToken}`,
       }
     });
 
