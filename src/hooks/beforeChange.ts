@@ -6,6 +6,7 @@ import {
 import { FileData } from "payload/dist/uploads/types";
 import { CloudflareImageService } from "../service";
 import { getIncomingFiles } from "../utils";
+import { ID_MAP_FIELD_NAME } from "../fields";
 
 interface Args {
     collection: CollectionConfig;
@@ -17,6 +18,10 @@ export const getBeforeChangeHook =
             console.log("getBeforeChangeHook for Cloudflare Images");
 
             const service = new CloudflareImageService({});
+
+            let returnValue = {};
+
+            returnValue = { ...data };
 
             try {
                 const files = getIncomingFiles({ req, data });
@@ -51,7 +56,8 @@ export const getBeforeChangeHook =
                         await Promise.all(deletionPromises);
                     }
 
-                    const promises = files.map(async (file) => {
+                    // Do this sequentially so we can update the array field
+                    for (const file of files) {
                         console.log(`Uploading ${file.filename} to Cloudflare Images`);
 
                         const response = await service.upload(
@@ -73,13 +79,16 @@ export const getBeforeChangeHook =
 
                         console.log(`Got Cloudflare Image ID: ${response.result.id}`);
 
-                        return {
-                            ...data,
-                            cloudflareImageID: response.result.id,
-                        };
-                    });
+                        const cloudflareImageMap: { originalFilename: string, cloudflareImageID: string }[] = data[ID_MAP_FIELD_NAME] || [];
 
-                    await Promise.all(promises);
+                        returnValue = {
+                            ...returnValue,
+                            [ID_MAP_FIELD_NAME]: cloudflareImageMap.push({
+                                originalFilename: file.filename,
+                                cloudflareImageID: response.result.id,
+                            }),
+                        };
+                    }
                 }
             } catch (err: unknown) {
                 req.payload.logger.error(
