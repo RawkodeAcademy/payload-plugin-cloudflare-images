@@ -39,7 +39,7 @@ export const cloudflareImages =
 
         if (existingCollection.upload) {
           if (typeof existingCollection.upload === "object") {
-            if (existingCollection.upload.imageSizes.length > 0) {
+            if (existingCollection.upload.imageSizes?.length > 0) {
               console.warn(`You have any imageSizes for collection ${existingCollection.slug} defined, they are BEING IGNORED because Cloudflare Images are enabled on the collection.`,
               );
             }

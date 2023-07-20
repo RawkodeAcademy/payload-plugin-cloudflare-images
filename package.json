@@ -1,6 +1,6 @@
 {
   "name": "@rawkode.academy/payload-plugin-cloudflare-images",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/RawkodeAcademy/payload-plugin-cloudflare-images.git",
