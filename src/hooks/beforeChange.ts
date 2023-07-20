@@ -52,7 +52,8 @@ export const getBeforeChangeHook =
                     }
 
                     const promises = files.map(async (file) => {
-                        console.log("Uploading File");
+                        console.log(`Uploading ${file.filename} to Cloudflare Images`);
+
                         const response = await service.upload(
                             file.filename,
                             file.buffer,
@@ -61,6 +62,15 @@ export const getBeforeChangeHook =
 
                         console.log("FINISHED");
                         console.debug(response);
+
+                        if (!response.success) {
+                            req.payload.logger.error(
+                                `There was an error while uploading files corresponding to the collection ${collection.slug} with filename ${data.filename}:`,
+                            );
+                            throw new Error(
+                                `There was an error uploading the file ${file.filename}: ${response.errors[0].message}`,
+                            );
+                        }
 
                         console.log(`Got Cloudflare Image ID: ${response.result.id}`);
 

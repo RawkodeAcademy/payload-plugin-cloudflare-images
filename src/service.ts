@@ -23,6 +23,8 @@ export class CloudflareImageService {
       this.config.apiToken = process.env.CLOUDFLARE_API_TOKEN;
     }
 
+    console.debug(this.config);
+
     this.baseUrl = `https://api.cloudflare.com/client/v4/accounts/${this.config.accountId}/images/v1`;
   }
 
