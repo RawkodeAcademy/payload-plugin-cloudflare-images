@@ -1,5 +1,5 @@
 import { CollectionConfig } from "payload/types";
-import { UploadResponse } from "./types";
+import { File, UploadResponse } from "./types";
 
 interface Config {
   accountId?: string;
@@ -29,18 +29,19 @@ export class CloudflareImageService {
   }
 
   async upload(
-    filename: string,
-    buffer: Buffer,
+    file: File,
     collectionConfig: CollectionConfig
   ): Promise<UploadResponse> {
     console.log("Cloudflare Images upload ...");
     const formData = new FormData();
 
-    formData.append("file", new Blob([buffer]), filename);
     formData.append("metadata", JSON.stringify({
       collection: collectionConfig?.slug,
     }));
-    formData.append("requireSignedURLs", "false");
+    formData.append("file", new Blob([file.buffer]), file.filename);
+
+
+    console.debug(formData);
 
     const response = await fetch(this.baseUrl, {
       method: "POST",

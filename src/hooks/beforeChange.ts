@@ -55,8 +55,7 @@ export const getBeforeChangeHook =
                         console.log(`Uploading ${file.filename} to Cloudflare Images`);
 
                         const response = await service.upload(
-                            file.filename,
-                            file.buffer,
+                            file,
                             collection,
                         );
 
