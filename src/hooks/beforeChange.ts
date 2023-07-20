@@ -12,8 +12,14 @@ interface Args {
     collection: CollectionConfig;
 }
 
+interface CloudflareImage {
+    [ID_MAP_FIELD_NAME]: string;
+}
+
 export const getBeforeChangeHook =
-    ({ collection }: Args): BeforeChangeHook<FileData & TypeWithID> =>
+    ({
+        collection,
+    }: Args): BeforeChangeHook<FileData & TypeWithID & CloudflareImage> =>
         async ({ req, data, originalDoc }) => {
             console.log("getBeforeChangeHook for Cloudflare Images");
 
@@ -26,76 +32,52 @@ export const getBeforeChangeHook =
             try {
                 const files = getIncomingFiles({ req, data });
 
-                if (files.length > 0) {
-                    console.log("Got a File");
-
-                    // If there is an original doc,
-                    // And we have new files,
-                    // We need to delete the old files before uploading new
-                    if (originalDoc) {
-                        let filesToDelete: string[] = [];
-
-                        if (typeof originalDoc?.filename === "string") {
-                            filesToDelete.push(originalDoc.filename);
-                        }
-
-                        if (typeof originalDoc.sizes === "object") {
-                            filesToDelete = filesToDelete.concat(
-                                Object.values(originalDoc?.sizes || []).map(
-                                    (resizedFileData) => resizedFileData?.filename,
-                                ),
-                            );
-                        }
-
-                        const deletionPromises = filesToDelete.map(async (filename) => {
-                            if (filename) {
-                                await service.delete(originalDoc.id.toString());
-                            }
-                        });
-
-                        await Promise.all(deletionPromises);
-                    }
-
-                    // Do this sequentially so we can update the array field
-                    for (const file of files) {
-                        console.log(`Uploading ${file.filename} to Cloudflare Images`);
-
-                        const response = await service.upload(
-                            file,
-                            collection,
-                        );
-
-                        console.log("FINISHED");
-                        console.debug(response);
-
-                        if (!response.success) {
-                            req.payload.logger.error(
-                                `There was an error while uploading files corresponding to the collection ${collection.slug} with filename ${data.filename}:`,
-                            );
-                            throw new Error(
-                                `There was an error uploading the file ${file.filename}: ${response.errors[0].message}`,
-                            );
-                        }
-
-                        console.log(`Got Cloudflare Image ID: ${response.result.id}`);
-
-                        const cloudflareImageMap: { originalFilename: string, cloudflareImageID: string }[] = data[ID_MAP_FIELD_NAME] || [];
-
-                        returnValue = {
-                            ...returnValue,
-                            [ID_MAP_FIELD_NAME]: cloudflareImageMap.push({
-                                originalFilename: file.filename,
-                                cloudflareImageID: response.result.id,
-                            }),
-                        };
-                    }
+                if (files.length === 0) {
+                    return data;
                 }
+
+                if (files.length > 1) {
+                    throw new Error(
+                        "Unexpected multiple files. Plugin should disable imageSizes. Please open an issue.",
+                    );
+                }
+
+                const file = files[0];
+
+                if (originalDoc) {
+                    console.log(
+                        `Replacing Image and Deleting Cloudflare ID ${originalDoc[ID_MAP_FIELD_NAME]}`,
+                    );
+                    await service.delete(originalDoc[ID_MAP_FIELD_NAME]);
+                }
+
+                console.log(`Uploading ${file.filename} to Cloudflare Images`);
+
+                const response = await service.upload(file, collection);
+
+                console.log("FINISHED");
+                console.debug(response);
+
+                if (!response.success) {
+                    req.payload.logger.error(
+                        `There was an error while uploading files corresponding to the collection ${collection.slug} with filename ${data.filename}:`,
+                    );
+                    throw new Error(
+                        `There was an error uploading the file ${file.filename}: ${response.errors[0].message}`,
+                    );
+                }
+
+                console.log(`Got Cloudflare Image ID: ${response.result.id}`);
+                data.filename = `${response.result.id}/public`;
+                data[ID_MAP_FIELD_NAME] = response.result.id;
             } catch (err: unknown) {
                 req.payload.logger.error(
                     `There was an error while uploading files corresponding to the collection ${collection.slug} with filename ${data.filename}:`,
                 );
                 req.payload.logger.error(err);
             }
+
+            console.debug(data);
 
             return data;
         };

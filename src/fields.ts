@@ -6,22 +6,18 @@ export const getFields = (): Field[] => {
     return [
         {
             name: ID_MAP_FIELD_NAME,
-            label: 'Cloudflare Images',
-            type: 'array',
+            label: 'Cloudflare Image ID',
+            type: 'text',
             admin: {
                 readOnly: true,
                 hidden: false,
+                position: 'sidebar',
             },
-            fields: [
-                {
-                    name: "originalFilename",
-                    type: "text",
-                },
-                {
-                    name: "cloudflareImageID",
-                    type: "text",
-                }
-            ]
-        }
+            access: {
+                read: () => true,
+                create: () => false,
+                update: () => false,
+            }
+        },
     ]
 };

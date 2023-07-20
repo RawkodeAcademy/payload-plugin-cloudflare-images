@@ -1,5 +1,5 @@
 import type { Config } from "payload/config";
-import { getFields } from "./fields";
+import { ID_MAP_FIELD_NAME, getFields } from "./fields";
 import { getBeforeChangeHook } from "./hooks/beforeChange";
 import type { PluginOptions } from "./types";
 
@@ -22,10 +22,6 @@ export const cloudflareImages =
     return {
       ...config,
       collections: (config.collections || []).map((existingCollection) => {
-        console.log(`Adding Cloudflare Images to ${existingCollection.slug}`);
-
-        const fields = getFields();
-
         const handlers = [
           ...(typeof existingCollection.upload === "object" &&
             Array.isArray(existingCollection.upload.handlers)
@@ -33,18 +29,31 @@ export const cloudflareImages =
             : []),
         ];
 
+        if (!existingCollection.upload) {
+          return existingCollection;
+        }
+
         console.info(
           `Applying Cloudflare Images to ${existingCollection.slug}.`,
         );
 
-        if (existingCollection.upload) {
-          if (typeof existingCollection.upload === "object") {
-            if (existingCollection.upload.imageSizes?.length > 0) {
-              console.warn(`You have any imageSizes for collection ${existingCollection.slug} defined, they are BEING IGNORED because Cloudflare Images are enabled on the collection.`,
-              );
-            }
+        const fields = getFields();
+
+        if (typeof existingCollection.upload === "object") {
+          if (existingCollection.upload.imageSizes?.length > 0) {
+            console.warn(
+              `You have any imageSizes for collection ${existingCollection.slug} defined, they are BEING IGNORED because Cloudflare Images are enabled on the collection.`,
+            );
           }
         }
+
+        console.log("Fields are:");
+        console.debug({
+          ...existingCollection.fields,
+          ...fields,
+        });
+
+        console.log(process.env.CLOUDFLARE_IMAGE_DELIVERY_URL);
 
         return {
           ...existingCollection,
@@ -54,6 +63,8 @@ export const cloudflareImages =
               : {}),
             handlers,
             disableLocalStorage: true,
+            staticURL: process.env.CLOUDFLARE_IMAGE_DELIVERY_URL,
+            adminThumbnail: 'square'
           },
           hooks: {
             ...(existingCollection.hooks || {}),
@@ -66,7 +77,7 @@ export const cloudflareImages =
             //   getAfterDeleteHook({ collection: existingCollection }),
             // ],
           },
-          fields,
+          fields: [...existingCollection.fields, ...fields],
         };
       }),
       onInit: async (payload) => {

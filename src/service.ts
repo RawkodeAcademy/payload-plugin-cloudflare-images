@@ -4,6 +4,7 @@ import { File, UploadResponse } from "./types";
 interface Config {
   accountId?: string;
   apiToken?: string;
+  imageDeliveryUrl?: string;
 }
 
 export class CloudflareImageService {
@@ -22,10 +23,17 @@ export class CloudflareImageService {
     if (process.env.CLOUDFLARE_API_TOKEN) {
       this.config.apiToken = process.env.CLOUDFLARE_API_TOKEN;
     }
+    if (process.env.CLOUDFLARE_IMAGE_DELIVERY_URL) {
+      this.config.imageDeliveryUrl = process.env.CLOUDFLARE_IMAGE_DELIVERY_URL;
+    }
 
     console.debug(this.config);
 
     this.baseUrl = `https://api.cloudflare.com/client/v4/accounts/${this.config.accountId}/images/v1`;
+  }
+
+  getImageDeliveryUrl(): string {
+    return this.config.imageDeliveryUrl;
   }
 
   async upload(
