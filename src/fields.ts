@@ -8,7 +8,7 @@ export const getFields = (): Field[] => {
             type: 'text',
             admin: {
                 readOnly: true,
-                hidden: true,
+                hidden: false,
             },
         }
     ]
