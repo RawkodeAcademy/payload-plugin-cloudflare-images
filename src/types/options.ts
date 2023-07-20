@@ -2,7 +2,7 @@ export interface PluginOptions {
     enabled?: boolean;
     accountId?: string;
     apiToken?: string;
-    collections: Record<string, CollectionOptions>;
+    collections: string[];
 }
 
 export interface CollectionOptions {

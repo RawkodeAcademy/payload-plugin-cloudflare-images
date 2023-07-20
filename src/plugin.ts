@@ -1,7 +1,7 @@
 import type { Config } from "payload/config";
 import { getFields } from "./fields";
 import { getBeforeChangeHook } from "./hooks/beforeChange";
-import type { CollectionOptions, PluginOptions } from "./types";
+import type { PluginOptions } from "./types";
 
 export const cloudflareImages =
   (pluginOptions: PluginOptions) => (incomingConfig: Config): Config => {
@@ -24,7 +24,6 @@ export const cloudflareImages =
       collections: (config.collections || []).map((existingCollection) => {
         console.log(`Adding Cloudflare Images to ${existingCollection.slug}`);
 
-        const options: CollectionOptions = pluginCollections[existingCollection.slug];
         const fields = getFields();
 
         const handlers = [
@@ -41,10 +40,7 @@ export const cloudflareImages =
               ? existingCollection.upload
               : {}),
             handlers,
-            disableLocalStorage:
-              typeof options.disableLocalStorage === "boolean"
-                ? options.disableLocalStorage
-                : true,
+            disableLocalStorage: true,
           },
           hooks: {
             ...(existingCollection.hooks || {}),
