@@ -43,6 +43,7 @@ export class CloudflareImageService {
     const response = await fetch(this.baseUrl, {
       method: "POST",
       headers: {
+        "X-Auth-Key": this.config.apiToken,
         "Content-Type": "multipart/form-data",
       },
       body: formData,
@@ -54,6 +55,9 @@ export class CloudflareImageService {
   async delete(imageId: string): Promise<boolean> {
     const response = await fetch(`${this.baseUrl}/${imageId}`, {
       method: "DELETE",
+      headers: {
+        "X-Auth-Key": this.config.apiToken,
+      }
     });
 
     return response.ok;
