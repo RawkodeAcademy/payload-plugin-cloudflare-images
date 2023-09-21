@@ -2976,13 +2976,13 @@ packages:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
     dev: true
 
-  /graphql-http@1.21.0(graphql@16.7.1):
+  /graphql-http@1.21.0(graphql@16.8.1):
     resolution: {integrity: sha512-yrItPfHj5WeT4n7iusbVin+vGSQjXFAX6U/GnYytdCJRXVad1TWGtYFDZ2ROjCKpXQzIwvfbiWCEwfuXgR3B6A==}
     engines: {node: '>=12'}
     peerDependencies:
       graphql: '>=0.11 <=16'
     dependencies:
-      graphql: 16.7.1
+      graphql: 16.8.1
     dev: false
 
   /graphql-playground-html@1.6.30:
@@ -3000,35 +3000,35 @@ packages:
       graphql-playground-html: 1.6.30
     dev: false
 
-  /graphql-query-complexity@0.12.0(graphql@16.7.1):
+  /graphql-query-complexity@0.12.0(graphql@16.8.1):
     resolution: {integrity: sha512-fWEyuSL6g/+nSiIRgIipfI6UXTI7bAxrpPlCY1c0+V3pAEUo1ybaKmSBgNr1ed2r+agm1plJww8Loig9y6s2dw==}
     peerDependencies:
       graphql: ^14.6.0 || ^15.0.0 || ^16.0.0
     dependencies:
-      graphql: 16.7.1
+      graphql: 16.8.1
       lodash.get: 4.4.2
     dev: false
 
-  /graphql-scalars@1.22.2(graphql@16.7.1):
+  /graphql-scalars@1.22.2(graphql@16.8.1):
     resolution: {integrity: sha512-my9FB4GtghqXqi/lWSVAOPiTzTnnEzdOXCsAC2bb5V7EFNQjVjwy3cSSbUvgYOtDuDibd+ZsCDhz+4eykYOlhQ==}
     engines: {node: '>=10'}
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
-      graphql: 16.7.1
+      graphql: 16.8.1
       tslib: 2.6.0
     dev: false
 
-  /graphql-type-json@0.3.2(graphql@16.7.1):
+  /graphql-type-json@0.3.2(graphql@16.8.1):
     resolution: {integrity: sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==}
     peerDependencies:
       graphql: '>=0.8.0'
     dependencies:
-      graphql: 16.7.1
+      graphql: 16.8.1
     dev: false
 
-  /graphql@16.7.1:
-    resolution: {integrity: sha512-DRYR9tf+UGU0KOsMcKAlXeFfX89UiiIZ0dRU3mR0yJfu6OjZqUcp68NnFLnqQU5RexygFoDy1EW+ccOYcPfmHg==}
+  /graphql@16.8.1:
+    resolution: {integrity: sha512-59LZHPdGZVh695Ud9lRzPBVTtlX9ZCV150Er2W43ro37wVof0ctenSaskPPjN7lVTIN8mSZt8PHUNKZuNQUuxw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
     dev: false
 
@@ -3791,6 +3791,7 @@ packages:
 
   /memory-pager@1.5.0:
     resolution: {integrity: sha512-ZS4Bp4r/Zoeq6+NLJpP+0Zzm0pR8whtGPf1XExKLJBAczGMnSi3It14OiNCStjQjM6NU1okjQGSxgEZN8eBYKg==}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -4368,12 +4369,12 @@ packages:
       flatley: 5.2.0
       fs-extra: 10.1.0
       get-tsconfig: 4.6.2
-      graphql: 16.7.1
-      graphql-http: 1.21.0(graphql@16.7.1)
+      graphql: 16.8.1
+      graphql-http: 1.21.0(graphql@16.8.1)
       graphql-playground-middleware-express: 1.7.23(express@4.18.2)
-      graphql-query-complexity: 0.12.0(graphql@16.7.1)
-      graphql-scalars: 1.22.2(graphql@16.7.1)
-      graphql-type-json: 0.3.2(graphql@16.7.1)
+      graphql-query-complexity: 0.12.0(graphql@16.8.1)
+      graphql-scalars: 1.22.2(graphql@16.8.1)
+      graphql-type-json: 0.3.2(graphql@16.8.1)
       html-webpack-plugin: 5.5.3(webpack@5.88.2)
       http-status: 1.6.2
       i18next: 22.5.1
@@ -6096,6 +6097,7 @@ packages:
 
   /sparse-bitfield@3.0.3:
     resolution: {integrity: sha512-kvzhi7vqKTfkh0PZU+2D2PIllw2ymqJKujUcyPMd9Y75Nv4nPbGJZXNhxsgdQab2BmlDct1YnfQCguEvHr7VsQ==}
+    requiresBuild: true
     dependencies:
       memory-pager: 1.5.0
     dev: false
